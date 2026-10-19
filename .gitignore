@@ -53,8 +53,8 @@ doc/tags
 # Tests y temporales del plugin
 /tmp/
 tests/tmp/
-.dotnetforge/
-dotnetforge_locations
+.kiln/
+kiln_locations
 
 # Logs
 *.log

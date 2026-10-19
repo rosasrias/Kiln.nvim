@@ -1,6 +1,6 @@
-# dotnetforge.nvim
+# Kiln.nvim
 
-[![test](https://github.com/rosasrias/DotnetForge/actions/workflows/test.yml/badge.svg)](https://github.com/rosasrias/DotnetForge/actions/workflows/test.yml)
+[![test](https://github.com/rosasrias/Kiln.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/rosasrias/Kiln.nvim/actions/workflows/test.yml)
 ![Neovim >=0.10](https://img.shields.io/badge/Neovim-%3E%3D0.10-57A143?logo=neovim)
 ![.NET SDK](https://img.shields.io/badge/.NET-8%20%7C%209%20%7C%2010-512BD4?logo=dotnet)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
@@ -10,7 +10,7 @@ Asistente para crear proyectos **C# / .NET** dentro de Neovim, con interfaz esti
 Clon hermano de `javaforge.nvim` adaptado a .NET — **usa NuGet, no Maven** — con 18 plantillas `dotnet new` completas. Incluye wizard de proyectos y popup *New C# Class*.
 
 <p align="center">
-  <img src="assets/start.png" alt="DotnetForge Wizard" width="85%" />
+  <img src="assets/start.png" alt="Kiln.nvim Wizard" width="85%" />
   <br/>
   <em>Wizard — creación de proyecto .NET estilo IntelliJ</em>
 </p>
@@ -28,14 +28,14 @@ Clon hermano de `javaforge.nvim` adaptado a .NET — **usa NuGet, no Maven** —
 - Docker integrado (`sdk → aspnet`)
 - Historial de ubicaciones y `checkhealth`
 
-## Wizard (`DotnetForge` / `DotnetNewProject`)
+## Wizard (`:KilnProject`)
 
 - **Campos inteligentes**: Name, Location, Namespace, Framework (`net8.0` / `net9.0` / `net10.0` + `-windows` para WPF/WinForms). Namespace derivado a PascalCase con sync bidireccional.
-- **Ubicación**: picker con historial `dotnetforge_locations`.
-- **SDK**: `dotnet --list-sdks` + `DOTNET_ROOT` + PATH + `C:\Program Files\dotnet\sdk` | `lua/dotnetforge/utils.lua:48`
+- **Ubicación**: picker con historial `kiln_locations`.
+- **SDK**: `dotnet --list-sdks` + `DOTNET_ROOT` + PATH + `C:\Program Files\dotnet\sdk` | `lua/kiln/utils.lua:124`
 - **TFM**: `<TargetFramework>` + imagen Docker `mcr.microsoft.com/dotnet/sdk:8.0` → `aspnet:8.0`.
 
-### Plantillas (18) — `lua/dotnetforge/catalog.lua`
+### Plantillas (18) — `lua/kiln/catalog.lua`
 
 | Grupo | Plantilla | `dotnet new` | Genera (NuGet) |
 |-------|-----------|--------------|----------------|
@@ -60,7 +60,7 @@ Clon hermano de `javaforge.nvim` adaptado a .NET — **usa NuGet, no Maven** —
 
 > Todas usan `<RootNamespace>` = Namespace del wizard y `<ImplicitUsings>enable</ImplicitUsings>` + `<Nullable>enable</Nullable>`.
 
-En Web API los **chips** `EF Core / Swagger / Auth` añaden `PackageReference` NuGet correspondientes (`lua/dotnetforge/generators/webapi.lua:5`).
+En Web API los **chips** `EF Core / Swagger / Auth` añaden `PackageReference` NuGet correspondientes (`lua/kiln/generators/webapi.lua:17`).
 
 ### Features
 
@@ -70,12 +70,12 @@ En Web API los **chips** `EF Core / Swagger / Auth` añaden `PackageReference` N
 | Add sample code | Código real por plantilla (ver tabla) |
 | Add tests (NuGet) | Stub `[Fact]/[Test]/[TestMethod]` |
 | Add .editorconfig & .gitattributes | Meta |
-| **Multi-project (Core/App) + .sln** | `src/Core/Core.csproj` + `src/App/App.csproj` + `ProjectReference` + `.sln` (`lua/dotnetforge/generators/multiproject.lua`) |
+| **Multi-project (Core/App) + .sln** | `src/Core/Core.csproj` + `src/App/App.csproj` + `ProjectReference` + `.sln` (`lua/kiln/generators/multiproject.lua`) |
 | Add Dockerfile & docker-compose | `sdk:8.0 → aspnet:8.0` + `dotnet publish` (solo webs) |
 
-Sidebar agrupa plantillas por categoría con iconos ( `🖥️ General | 🌐 ASP.NET Core | 🔌 Servicios | 🖼️ Desktop | 🧪 Testing | 📦 Solución` ) — `lua/dotnetforge/ui/views/new_project.lua:45`.
+Sidebar agrupa plantillas por categoría con iconos ( `🖥️ General | 🌐 ASP.NET Core | 🔌 Servicios | 🖼️ Desktop | 🧪 Testing | 📦 Solución` ) — `lua/kiln/ui/views/new_project.lua:112`.
 
-### New C# Class (`DotnetForgeNew`)
+### New C# Class (`:KilnNew`)
 
 <p align="center">
   <img src="assets/class.png" alt="New C# Class popup" width="70%" />
@@ -85,7 +85,7 @@ Sidebar agrupa plantillas por categoría con iconos ( `🖥️ General | 🌐 AS
 
 11 tipos: `class/interface/record/enum/struct/exception` + `entity/controller/service/repository/worker` — namespace autodetectado vía `<RootNamespace>` + sufijos (`UserController.cs`).
 
-### Delete (`DotnetForgeDelete`)
+### Delete (`:KilnDelete`)
 
 Busca `*.cs` en raíces `*.csproj/ *.sln`, lista `namespace.clase [root]`, borra tests asociados.
 
@@ -108,7 +108,7 @@ Busca `*.cs` en raíces `*.csproj/ *.sln`, lista `namespace.clase [root]`, borra
 
 ```lua
 {
-  "rosasrias/DotnetForge",
+  "rosasrias/Kiln.nvim",
   dependencies = { "nvzone/volt" },
   opts = {
     project = {
@@ -120,7 +120,7 @@ Busca `*.cs` en raíces `*.csproj/ *.sln`, lista `namespace.clase [root]`, borra
     git = { enabled = true },
   },
   config = function(_, opts)
-    require("dotnetforge").setup(opts)
+    require("kiln").setup(opts)
   end,
 }
 ```
@@ -129,15 +129,20 @@ Reinicia Neovim y el plugin registrará los comandos automáticamente.
 
 ## Uso
 
+El módulo público es `require("kiln")` y expone `setup()`, `open()` y `close()`.
+`:KilnNew` es el comando principal para generar artefactos C# (clases, interfaces, records,
+enums, structs y variantes como controller/service/repository); `:KilnProject` abre el wizard
+de proyectos .NET.
+
 ```vim
-:DotnetForge              " wizard (alias :DotnetNewProject, :CSharpForge)
-:DotnetForgeNew           " popup clase
-:DotnetForgeNew entity
-:DotnetForgeNewNamespace  " crear namespace (alias :DotnetForgeNewPackage)
-:DotnetForgeDelete        " eliminar clase + tests asociados
-:DotnetProjectInfo        " info del proyecto actual
-:DotnetForgeClose         " cerrar wizard
-:checkhealth dotnetforge  " verificar SDKs y dependencias
+:KilnProject       " wizard de creación de proyectos .NET
+:KilnNew           " popup de artefactos (clase/interface/record/enum/struct/...)
+:KilnNew entity    " abrir el popup con un tipo preseleccionado
+:KilnNewNamespace  " crear namespace (alias :KilnNewPackage)
+:KilnDelete        " eliminar clase + tests asociados
+:KilnInfo          " info del proyecto .NET actual
+:KilnClose         " cerrar wizard
+:checkhealth kiln  " verificar SDKs y dependencias
 ```
 
 ### Atajos dentro del wizard
@@ -152,7 +157,7 @@ Reinicia Neovim y el plugin registrará los comandos automáticamente.
 ### Configuración avanzada
 
 ```lua
-require("dotnetforge").setup({
+require("kiln").setup({
   project = {
     default_location = "~/Documents/code",
     default_namespace = "MyCompany.App",
@@ -166,7 +171,7 @@ require("dotnetforge").setup({
 })
 ```
 
-Namespace se deriva automáticamente de `Name` en PascalCase si no está editado manualmente (`lua/dotnetforge/ui/actions.lua:24`).
+Namespace se deriva automáticamente de `Name` en PascalCase si no está editado manualmente (`lua/kiln/ui/actions.lua:61`).
 
 ## ¿Qué necesita .NET vs Java?
 
@@ -180,12 +185,12 @@ Namespace se deriva automáticamente de `Name` en PascalCase si no está editado
 ## Estructura
 
 ```
-lua/dotnetforge/
+lua/kiln/
   catalog.lua              catálogo 18 plantillas agrupadas
-  init.lua                 comandos :DotnetForge*
+  init.lua                 comandos :Kiln*
   state.lua                estado + default_template
   utils.lua                detect_sdks() + recents
-  health.lua               checkhealth dotnetforge
+  health.lua               checkhealth kiln
   core/{detector,project,validator,scaffold}
   generators/{console,webapi,wpf,dotnet_templates,multiproject,docker,extras}
   ui/{window,input,actions,components,highlights,views/new_project}
@@ -205,10 +210,38 @@ nvim --headless --clean "+set rtp^=/tmp/volt,$PWD" "+luafile tests/run.lua"
 
 ## Contribución
 
-1. Fork & `git clone https://github.com/rosasrias/DotnetForge.git`
+1. Fork & `git clone https://github.com/rosasrias/Kiln.nvim.git`
 2. Crea branch `feat/mi-cambio`
 3. `nvim --headless --clean "+luafile tests/run.lua"` debe pasar
 4. PR con descripción clara
+
+## Migración desde DotnetForge (histórico)
+
+> El proyecto se llamaba **DotnetForge** antes de pasar a **Kiln.nvim**. Esta sección se conserva
+> únicamente como guía de migración para configuraciones existentes.
+
+El proyecto todavía no tenía releases ni tags, por lo que la migración es un corte limpio: los
+nombres antiguos ya no se registran.
+
+| Antes (DotnetForge) | Ahora (Kiln.nvim) | Notas |
+|---------------------|-------------------|-------|
+| `require("dotnetforge")` | `require("kiln")` | Mismo `setup()`, `open()` y `close()`. |
+| `require("dotnetforge.*")` | `require("kiln.*")` | Todos los módulos internos siguen la nueva ruta. |
+| `:DotnetForge`, `:DotnetNewProject`, `:CSharpForge` | `:KilnProject` | Wizard de proyectos. |
+| `:DotnetForgeNew` | `:KilnNew` | Popup de artefactos C#. |
+| `:DotnetForgeNewNamespace` | `:KilnNewNamespace` | Crear namespace. |
+| `:DotnetForgeNewPackage` | `:KilnNewPackage` | Alias de `:KilnNewNamespace` (compatibilidad con javaforge). |
+| `:DotnetForgeDelete` | `:KilnDelete` | Eliminar clase + tests asociados. |
+| `:DotnetForgeClose` | `:KilnClose` | Cerrar el wizard. |
+| `:DotnetProjectInfo` | `:KilnInfo` | Info del proyecto actual. |
+| `:checkhealth dotnetforge` | `:checkhealth kiln` | — |
+
+Otros cambios:
+
+- El historial de ubicaciones pasó de `dotnetforge_locations` a `kiln_locations`; se puede borrar
+  el archivo anterior sin perder funcionalidad.
+- Las opciones de configuración (`project.*`, `git.*`) no cambian.
+- Las keymaps del wizard se conservan tal cual (`q`, `<Esc>`, `<Tab>`, `<CR>`, `<C-s>`).
 
 ## Licencia
 
