@@ -215,26 +215,6 @@ nvim --headless --clean "+set rtp^=/tmp/volt,$PWD" "+luafile tests/run.lua"
 3. `nvim --headless --clean "+luafile tests/run.lua"` debe pasar
 4. PR con descripción clara
 
-## Migración desde DotnetForge (histórico)
-
-> El proyecto se llamaba **DotnetForge** antes de pasar a **Kiln.nvim**. Esta sección se conserva
-> únicamente como guía de migración para configuraciones existentes.
-
-El proyecto todavía no tenía releases ni tags, por lo que la migración es un corte limpio: los
-nombres antiguos ya no se registran.
-
-| Antes (DotnetForge) | Ahora (Kiln.nvim) | Notas |
-|---------------------|-------------------|-------|
-| `require("dotnetforge")` | `require("kiln")` | Mismo `setup()`, `open()` y `close()`. |
-| `require("dotnetforge.*")` | `require("kiln.*")` | Todos los módulos internos siguen la nueva ruta. |
-| `:DotnetForge`, `:DotnetNewProject`, `:CSharpForge` | `:KilnProject` | Wizard de proyectos. |
-| `:DotnetForgeNew` | `:KilnNew` | Popup de artefactos C#. |
-| `:DotnetForgeNewNamespace` | `:KilnNewNamespace` | Crear namespace. |
-| `:DotnetForgeNewPackage` | `:KilnNewPackage` | Alias de `:KilnNewNamespace` (compatibilidad con javaforge). |
-| `:DotnetForgeDelete` | `:KilnDelete` | Eliminar clase + tests asociados. |
-| `:DotnetForgeClose` | `:KilnClose` | Cerrar el wizard. |
-| `:DotnetProjectInfo` | `:KilnInfo` | Info del proyecto actual. |
-| `:checkhealth dotnetforge` | `:checkhealth kiln` | — |
 
 Otros cambios:
 
